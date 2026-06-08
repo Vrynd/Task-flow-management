@@ -34,13 +34,15 @@ class TaskListItem extends StatelessWidget {
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.fromLTRB(10, 16, 16, 16),
         decoration: BoxDecoration(
           color: isDark ? AppColors.slate800 : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isDark ? AppColors.slate700 : AppColors.slate200,
-            width: 1,
+            color: task.status == TaskStatus.inProgress
+                ? AppColors.indigo500.withValues(alpha: 0.6)
+                : (isDark ? AppColors.slate700 : AppColors.slate200),
+            width: task.status == TaskStatus.inProgress ? 1.5 : 1,
           ),
           boxShadow: isDark
               ? null
@@ -56,14 +58,10 @@ class TaskListItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // ── Checkbox Status ──────────────────────────────
-            Padding(
-              padding: const EdgeInsets.only(top: 2),
-              child: _StatusCheckbox(
-                status: task.status,
-                onTap: onStatusToggle,
-              ),
+            _StatusCheckbox(
+              status: task.status,
+              onTap: onStatusToggle,
             ),
-            const SizedBox(width: 12),
 
             // ── Konten Utama ────────────────────────────────
             Expanded(
@@ -74,6 +72,13 @@ class TaskListItem extends StatelessWidget {
                   Row(
                     children: [
                       _PriorityBadge(priority: task.priority),
+                      if (task.status == TaskStatus.inProgress) ...[
+                        const SizedBox(width: 6),
+                        _StatusChip(
+                          label: 'Sedang Dikerjakan',
+                          color: AppColors.priorityMedium,
+                        ),
+                      ],
                       const Spacer(),
                       if (isCompleted && onDelete != null)
                         IconButton(
@@ -290,25 +295,29 @@ class _StatusCheckbox extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        width: 22,
-        height: 22,
-        decoration: BoxDecoration(
-          color: isDone ? color : Colors.transparent,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isDone ? color : (isProgress ? color : color.withValues(alpha: 0.6)),
-            width: 2,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(6, 2, 12, 12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          width: 22,
+          height: 22,
+          decoration: BoxDecoration(
+            color: isDone ? color : Colors.transparent,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: isDone ? color : (isProgress ? color : color.withValues(alpha: 0.6)),
+              width: 2,
+            ),
           ),
+          child: icon != null
+              ? Icon(
+                  icon,
+                  size: 14,
+                  color: isDone ? Colors.white : color,
+                )
+              : null,
         ),
-        child: icon != null
-            ? Icon(
-                icon,
-                size: 14,
-                color: isDone ? Colors.white : color,
-              )
-            : null,
       ),
     );
   }

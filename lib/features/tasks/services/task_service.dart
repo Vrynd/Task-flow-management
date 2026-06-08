@@ -1,23 +1,13 @@
-import '../../../../core/services/api_service.dart';
-import '../models/task_model.dart';
+import 'package:task_management/core/services/api_service.dart';
+import 'package:task_management/features/tasks/models/task_model.dart';
 
-/// [TaskService] menangani semua API call yang berkaitan dengan tasks.
-///
-/// Bergantung pada [ApiService] sebagai HTTP client terpusat.
-/// Tidak boleh import widget atau screen apapun.
 class TaskService {
   final ApiService _api;
-
-  TaskService({ApiService? apiService})
-      : _api = apiService ?? ApiService();
+  TaskService({ApiService? apiService}) : _api = apiService ?? ApiService();
 
   static const String _tasksEndpoint = '/api/tasks';
 
-  // ─── Create Task ──────────────────────────────────────────────────────────
-
-  /// Membuat tugas baru ke server.
-  ///
-  /// Melempar [ApiException] jika terjadi error.
+  // Membuat tugas baru
   Future<TaskModel> createTask({
     required String title,
     String? description,
@@ -52,7 +42,6 @@ class TaskService {
       authToken: authToken,
     );
 
-    // Response: { success, message, data: { ...task } }
     final data = response['data'] as Map<String, dynamic>?;
     if (data == null) {
       throw const ApiException(message: 'Format respons tidak valid');
@@ -61,18 +50,10 @@ class TaskService {
     return TaskModel.fromJson(data);
   }
 
-  // ─── Get All Tasks ────────────────────────────────────────────────────────
-
-  /// Mengambil semua tugas dari server.
-  ///
-  /// Melempar [ApiException] jika terjadi error.
+  // Mengambil semua tugas
   Future<List<TaskModel>> getTasks({String? authToken}) async {
-    final response = await _api.get(
-      _tasksEndpoint,
-      authToken: authToken,
-    );
+    final response = await _api.get(_tasksEndpoint, authToken: authToken);
 
-    // Response: { success, message, data: [ ...tasks ] }
     final rawList = response['data'];
     if (rawList == null) return [];
 
@@ -86,11 +67,7 @@ class TaskService {
     return [];
   }
 
-  // ─── Update Task ──────────────────────────────────────────────────────────
-
-  /// Memperbarui tugas yang sudah ada di server.
-  ///
-  /// Melempar [ApiException] jika terjadi error.
+  // Memperbarui tugas yang sudah ada
   Future<TaskModel> updateTask({
     required String id,
     required String title,
@@ -131,7 +108,6 @@ class TaskService {
       authToken: authToken,
     );
 
-    // Response: { success, message, data: { ...task } }
     final data = response['data'] as Map<String, dynamic>?;
     if (data == null) {
       throw const ApiException(message: 'Format respons tidak valid');
@@ -140,19 +116,13 @@ class TaskService {
     return TaskModel.fromJson(data);
   }
 
-  // ─── Update Task Status ───────────────────────────────────────────────────
-
-  /// Memperbarui hanya status tugas di server.
-  ///
-  /// Melempar [ApiException] jika terjadi error.
+  // Memperbarui hanya status tugas
   Future<TaskModel> updateTaskStatus({
     required String id,
     required TaskStatus status,
     String? authToken,
   }) async {
-    final body = <String, dynamic>{
-      'status': status.toApiString(),
-    };
+    final body = <String, dynamic>{'status': status.toApiString()};
 
     final response = await _api.put(
       '$_tasksEndpoint/$id/status',
@@ -160,7 +130,6 @@ class TaskService {
       authToken: authToken,
     );
 
-    // Response: { success, message, data: { ...task } }
     final data = response['data'] as Map<String, dynamic>?;
     if (data == null) {
       throw const ApiException(message: 'Format respons tidak valid');
@@ -169,15 +138,8 @@ class TaskService {
     return TaskModel.fromJson(data);
   }
 
-  // ─── Delete Task ──────────────────────────────────────────────────────────
-
-  /// Menghapus tugas dari server.
-  ///
-  /// Melempar [ApiException] jika terjadi error.
-  Future<bool> deleteTask({
-    required String id,
-    String? authToken,
-  }) async {
+  // Menghapus tugas
+  Future<bool> deleteTask({required String id, String? authToken}) async {
     final response = await _api.delete(
       '$_tasksEndpoint/$id',
       authToken: authToken,

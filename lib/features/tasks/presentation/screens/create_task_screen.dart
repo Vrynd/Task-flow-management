@@ -10,12 +10,6 @@ import '../widgets/priority_selector.dart';
 import '../widgets/deadline_picker.dart';
 import '../widgets/category_form.dart';
 
-/// Halaman untuk membuat tugas baru.
-///
-/// Dipecah menjadi:
-/// - [CreateTaskScreen] → Scaffold + AppBar
-/// - [_CreateTaskForm] → Form stateful dengan semua field
-/// - [_SectionLabel] → Label per section
 class CreateTaskScreen extends StatelessWidget {
   final TaskModel? task;
 
@@ -151,7 +145,6 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
       builder: (context, taskProvider, _) {
         return Stack(
           children: [
-            // ── Scrollable Form ──────────────────────────────────
             SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
               child: Form(

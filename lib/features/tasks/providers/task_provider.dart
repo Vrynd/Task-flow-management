@@ -1,20 +1,15 @@
 import 'package:flutter/foundation.dart';
+import 'package:task_management/core/services/api_service.dart';
+import 'package:task_management/features/tasks/models/task_model.dart';
+import 'package:task_management/features/tasks/services/task_service.dart';
 
-import '../../../../core/services/api_service.dart';
-import '../models/task_model.dart';
-import '../services/task_service.dart';
-
-/// [TaskProvider] mengelola state semua operasi task.
-///
-/// Tidak boleh import widget atau screen apapun.
 class TaskProvider extends ChangeNotifier {
   final TaskService _taskService;
 
   TaskProvider({TaskService? taskService})
-      : _taskService = taskService ?? TaskService();
+    : _taskService = taskService ?? TaskService();
 
-  // ─── State ───────────────────────────────────────────────────────────────
-
+  // State
   List<TaskModel> _tasks = [];
   bool _isFetching = false;
   bool _isCreating = false;
@@ -22,8 +17,7 @@ class TaskProvider extends ChangeNotifier {
   bool _isDeleting = false;
   String? _errorMessage;
 
-  // ─── Getters ─────────────────────────────────────────────────────────────
-
+  // 
   List<TaskModel> get tasks => List.unmodifiable(_tasks);
   bool get isFetching => _isFetching;
   bool get isCreating => _isCreating;
@@ -32,21 +26,15 @@ class TaskProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isEmpty => _tasks.isEmpty;
 
-  // ─── Filtered Lists ───────────────────────────────────────────────────────
+  //
+  List<TaskModel> get todayTasks => _tasks.where((t) => t.isDueToday).toList();
 
-  List<TaskModel> get todayTasks =>
-      _tasks.where((t) => t.isDueToday).toList();
-
-  List<TaskModel> get overdueTasks =>
-      _tasks.where((t) => t.isOverdue).toList();
+  List<TaskModel> get overdueTasks => _tasks.where((t) => t.isOverdue).toList();
 
   List<TaskModel> get doneTasks =>
       _tasks.where((t) => t.status == TaskStatus.done).toList();
 
-  // ─── Fetch Tasks ──────────────────────────────────────────────────────────
-
   /// Mengambil semua tasks dari server.
-  /// [authToken] opsional untuk protected endpoint.
   Future<void> fetchTasks({String? authToken}) async {
     _isFetching = true;
     _errorMessage = null;
@@ -64,11 +52,7 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Create Task ──────────────────────────────────────────────────────────
-
-  /// Membuat task baru dan menambahkannya ke list lokal.
-  ///
-  /// Return `true` jika berhasil.
+  // Membuat task baru
   Future<bool> createTask({
     required String title,
     String? description,
@@ -91,7 +75,6 @@ class TaskProvider extends ChangeNotifier {
         authToken: authToken,
       );
 
-      // Sisipkan di awal list agar langsung terlihat
       _tasks = [newTask, ..._tasks];
       return true;
     } on ApiException catch (e) {
@@ -106,11 +89,7 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Update Task ──────────────────────────────────────────────────────────
-
-  /// Memperbarui tugas yang sudah ada di server dan state lokal.
-  ///
-  /// Return `true` jika berhasil.
+  // Memperbarui tugas yang sudah
   Future<bool> updateTask({
     required String id,
     required String title,
@@ -155,11 +134,7 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Update Task Status ───────────────────────────────────────────────────
-
-  /// Memperbarui status tugas di server dan state lokal.
-  ///
-  /// Return `true` jika berhasil.
+  // Memperbarui status tugas
   Future<bool> updateTaskStatus({
     required String id,
     required TaskStatus status,
@@ -197,15 +172,8 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Delete Task ──────────────────────────────────────────────────────────
-
-  /// Menghapus tugas dari server dan state lokal.
-  ///
-  /// Return `true` jika berhasil.
-  Future<bool> deleteTask({
-    required String id,
-    String? authToken,
-  }) async {
+  //  Menghapus tugas
+  Future<bool> deleteTask({required String id, String? authToken}) async {
     _isDeleting = true;
     _errorMessage = null;
     notifyListeners();
@@ -234,8 +202,7 @@ class TaskProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Clear Error ─────────────────────────────────────────────────────────
-
+  // Membersihakan eror
   void clearError() {
     _errorMessage = null;
     notifyListeners();

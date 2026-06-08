@@ -86,6 +86,97 @@ class _HomeBodyState extends State<_HomeBody> {
     }
   }
 
+  void _showStatusBottomSheet(BuildContext context, TaskModel task) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDark ? AppColors.slate800 : Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Ubah Status Tugas',
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  task.title,
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 24),
+                _StatusBottomSheetOption(
+                  label: 'Belum Mulai',
+                  description: 'Tugas belum dikerjakan',
+                  icon: Icons.radio_button_unchecked_rounded,
+                  color: AppColors.slate400,
+                  isActive: task.status == TaskStatus.todo,
+                  onTap: () => Navigator.of(context).pop(TaskStatus.todo),
+                ),
+                const SizedBox(height: 12),
+                _StatusBottomSheetOption(
+                  label: 'Sedang Dikerjakan',
+                  description: 'Tugas sedang aktif dikerjakan',
+                  icon: Icons.hourglass_empty_rounded,
+                  color: AppColors.priorityMedium,
+                  isActive: task.status == TaskStatus.inProgress,
+                  onTap: () => Navigator.of(context).pop(TaskStatus.inProgress),
+                ),
+                const SizedBox(height: 12),
+                _StatusBottomSheetOption(
+                  label: 'Selesai',
+                  description: 'Tugas telah selesai dikerjakan',
+                  icon: Icons.check_circle_rounded,
+                  color: AppColors.priorityLow,
+                  isActive: task.status == TaskStatus.done,
+                  onTap: () => Navigator.of(context).pop(TaskStatus.done),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    ).then((newStatus) {
+      if (newStatus is TaskStatus && newStatus != task.status && context.mounted) {
+        final auth = context.read<AuthProvider>();
+        context.read<TaskProvider>().updateTaskStatus(
+              id: task.id,
+              status: newStatus,
+              authToken: auth.token,
+            );
+      }
+    });
+  }
+
   Future<void> _confirmDelete(BuildContext context, TaskModel task) async {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -263,16 +354,8 @@ class _HomeBodyState extends State<_HomeBody> {
                         return TaskListItem(
                           task: task,
                           onTap: () => _openEditTask(context, task),
-                          onStatusToggle: () {
-                            final newStatus = task.status == TaskStatus.done
-                                ? TaskStatus.todo
-                                : TaskStatus.done;
-                            context.read<TaskProvider>().updateTaskStatus(
-                                  id: task.id,
-                                  status: newStatus,
-                                  authToken: auth.token,
-                                );
-                          },
+                          onStatusToggle: () =>
+                              _showStatusBottomSheet(context, task),
                           onDelete: _activeTab == 1
                               ? () => _confirmDelete(context, task)
                               : null,
@@ -617,6 +700,99 @@ class _TabButton extends StatelessWidget {
                   : theme.colorScheme.onSurfaceVariant,
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Status Bottom Sheet Option ──────────────────────────────────────────────────
+
+class _StatusBottomSheetOption extends StatelessWidget {
+  final String label;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _StatusBottomSheetOption({
+    required this.label,
+    required this.description,
+    required this.icon,
+    required this.color,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isActive
+              ? color.withValues(alpha: 0.08)
+              : (isDark ? AppColors.slate700.withValues(alpha: 0.3) : AppColors.slate100),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isActive
+                ? color
+                : (isDark ? AppColors.slate700 : AppColors.slate200),
+            width: isActive ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: isActive ? color.withValues(alpha: 0.15) : theme.colorScheme.surface,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 20,
+                color: isActive ? color : theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    description,
+                    style: GoogleFonts.poppins(
+                      fontSize: 11,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isActive)
+              Icon(
+                Icons.check_circle_rounded,
+                color: color,
+                size: 20,
+              ),
+          ],
         ),
       ),
     );

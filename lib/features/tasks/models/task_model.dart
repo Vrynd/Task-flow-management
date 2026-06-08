@@ -1,160 +1,10 @@
-import 'package:flutter/material.dart';
+import 'category_model.dart';
+import 'task_priority.dart';
+import 'task_status.dart';
+export 'category_model.dart';
+export 'task_priority.dart';
+export 'task_status.dart';
 
-/// Enum prioritas tugas sesuai nilai dari API.
-enum TaskPriority {
-  high,
-  medium,
-  low;
-
-  /// Parse string dari API → enum
-  static TaskPriority fromString(String value) {
-    switch (value.toUpperCase()) {
-      case 'HIGH':
-        return TaskPriority.high;
-      case 'MEDIUM':
-        return TaskPriority.medium;
-      case 'LOW':
-      default:
-        return TaskPriority.low;
-    }
-  }
-
-  /// Konversi ke string untuk API request
-  String toApiString() {
-    switch (this) {
-      case TaskPriority.high:
-        return 'HIGH';
-      case TaskPriority.medium:
-        return 'MEDIUM';
-      case TaskPriority.low:
-        return 'LOW';
-    }
-  }
-
-  String get label {
-    switch (this) {
-      case TaskPriority.high:
-        return 'Tinggi';
-      case TaskPriority.medium:
-        return 'Sedang';
-      case TaskPriority.low:
-        return 'Rendah';
-    }
-  }
-
-  Color get color {
-    switch (this) {
-      case TaskPriority.high:
-        return const Color(0xFFF43F5E);
-      case TaskPriority.medium:
-        return const Color(0xFFF59E0B);
-      case TaskPriority.low:
-        return const Color(0xFF10B981);
-    }
-  }
-
-  Color get backgroundColor {
-    switch (this) {
-      case TaskPriority.high:
-        return const Color(0xFFFFF1F2);
-      case TaskPriority.medium:
-        return const Color(0xFFFFFBEB);
-      case TaskPriority.low:
-        return const Color(0xFFECFDF5);
-    }
-  }
-}
-
-/// Enum status tugas.
-enum TaskStatus {
-  todo,
-  inProgress,
-  done;
-
-  static TaskStatus fromString(String value) {
-    switch (value.toUpperCase()) {
-      case 'IN_PROGRESS':
-        return TaskStatus.inProgress;
-      case 'DONE':
-        return TaskStatus.done;
-      case 'TODO':
-      default:
-        return TaskStatus.todo;
-    }
-  }
-
-  String toApiString() {
-    switch (this) {
-      case TaskStatus.todo:
-        return 'TODO';
-      case TaskStatus.inProgress:
-        return 'IN_PROGRESS';
-      case TaskStatus.done:
-        return 'DONE';
-    }
-  }
-
-  String get label {
-    switch (this) {
-      case TaskStatus.todo:
-        return 'Belum Mulai';
-      case TaskStatus.inProgress:
-        return 'Sedang Dikerjakan';
-      case TaskStatus.done:
-        return 'Selesai';
-    }
-  }
-}
-
-// ─── Category Model ───────────────────────────────────────────────────────────
-
-/// Model untuk kategori tugas.
-class CategoryModel {
-  final String? id;
-  final String name;
-  final String color;
-
-  const CategoryModel({
-    this.id,
-    required this.name,
-    required this.color,
-  });
-
-  factory CategoryModel.fromJson(Map<String, dynamic> json) {
-    return CategoryModel(
-      id: json['id'] as String?,
-      name: json['name'] as String? ?? '',
-      color: json['color'] as String? ?? '#6366F1',
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'color': color,
-    };
-  }
-
-  /// Parse hex color string menjadi Flutter Color.
-  Color toFlutterColor() {
-    try {
-      final hex = color.replaceAll('#', '');
-      return Color(int.parse('FF$hex', radix: 16));
-    } catch (_) {
-      return const Color(0xFF6366F1);
-    }
-  }
-
-  @override
-  String toString() => 'CategoryModel(name: $name, color: $color)';
-}
-
-// ─── Task Model ───────────────────────────────────────────────────────────────
-
-/// Model data untuk entitas Task.
-///
-/// Plain Dart class, tidak boleh import widget/screen apapun
-/// kecuali package:flutter/material.dart untuk Color.
 class TaskModel {
   final String id;
   final String title;
@@ -174,8 +24,6 @@ class TaskModel {
     this.category,
   });
 
-  // ─── Factory Constructor ─────────────────────────────────────────────────
-
   factory TaskModel.fromJson(Map<String, dynamic> json) {
     return TaskModel(
       id: json['id'] as String? ?? '',
@@ -190,8 +38,7 @@ class TaskModel {
     );
   }
 
-  // ─── Serialization ────────────────────────────────────────────────────────
-
+  // Serialization
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{
       'title': title,
