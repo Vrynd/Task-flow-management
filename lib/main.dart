@@ -31,8 +31,6 @@ class TaskManagementApp extends StatelessWidget {
   }
 }
 
-/// [_AppRoot] selalu merender [MaterialApp.router] — tidak ada conditional switching.
-/// GoRouter mengelola splash screen sebagai route tersendiri.
 class _AppRoot extends StatefulWidget {
   const _AppRoot();
 
@@ -49,8 +47,6 @@ class _AppRootState extends State<_AppRoot> {
     final authProvider = context.read<AuthProvider>();
     _router = AppRouter.createRouter(authProvider);
 
-    // Gunakan Future.microtask agar initialize() berjalan setelah
-    // seluruh widget tree selesai di-build, mencegah '!_dirty' assertion.
     Future.microtask(() => authProvider.initialize());
   }
 
