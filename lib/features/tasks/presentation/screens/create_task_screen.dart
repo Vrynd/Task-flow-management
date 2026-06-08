@@ -120,6 +120,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
             deadline: _deadline,
             category: _category,
             authToken: authProvider.token,
+            authProvider: authProvider,
           )
         : await taskProvider.updateTask(
             id: widget.task!.id,
@@ -132,6 +133,7 @@ class _CreateTaskFormState extends State<_CreateTaskForm> {
             category: _category,
             status: _status,
             authToken: authProvider.token,
+            authProvider: authProvider,
           );
 
     if (success && context.mounted) {

@@ -31,7 +31,7 @@ class _CategoriesTabBodyState extends State<CategoriesTabBody> {
     );
 
     if (result == true && mounted) {
-      taskProvider.fetchTasks(authToken: auth.token);
+      taskProvider.fetchTasks(authToken: auth.token, authProvider: auth);
     }
   }
 
@@ -121,6 +121,7 @@ class _CategoriesTabBodyState extends State<CategoriesTabBody> {
               id: task.id,
               status: newStatus,
               authToken: auth.token,
+              authProvider: auth,
             );
       }
     });
@@ -187,6 +188,7 @@ class _CategoriesTabBodyState extends State<CategoriesTabBody> {
       final success = await taskProvider.deleteTask(
         id: task.id,
         authToken: auth.token,
+        authProvider: auth,
       );
 
       if (success && context.mounted) {

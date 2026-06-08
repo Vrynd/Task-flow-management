@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../../../../core/themes/app_colors.dart';
-import '../../../tasks/models/task_model.dart';
+import '../../models/task_model.dart';
 
 /// Modal bottom sheet kustom untuk memilih atau mengubah status tugas.
 class StatusBottomSheet extends StatelessWidget {

@@ -6,13 +6,11 @@ import 'package:task_management/core/themes/app_theme.dart';
 import 'package:task_management/features/auth/providers/auth_provider.dart';
 import 'package:task_management/features/home/presentation/widgets/home_empty_state.dart';
 import 'package:task_management/features/home/presentation/widgets/home_header.dart';
-import 'package:task_management/features/home/presentation/widgets/status_bottom_sheet.dart';
+import 'package:task_management/features/tasks/presentation/widgets/status_bottom_sheet.dart';
 import 'package:task_management/features/home/presentation/widgets/task_list_item.dart';
 import 'package:task_management/features/tasks/models/task_model.dart';
 import 'package:task_management/features/tasks/presentation/screens/create_task_screen.dart';
 import 'package:task_management/features/tasks/providers/task_provider.dart';
-
-
 
 class HomeScreen extends StatefulWidget {
   final bool isMenuMode;
@@ -31,7 +29,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final auth = context.read<AuthProvider>();
-      context.read<TaskProvider>().fetchTasks(authToken: auth.token);
+      context.read<TaskProvider>().fetchTasks(authToken: auth.token, authProvider: auth);
     });
   }
 
@@ -227,14 +225,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
+                  const SliverToBoxAdapter(child: SizedBox(height: 32)),
 
                   // Judul Section
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             _searchQuery.isEmpty
@@ -250,18 +248,23 @@ class _HomeScreenState extends State<HomeScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 8,
-                              vertical: 2,
+                              vertical: 4,
                             ),
+                            width: 30,
+                            height: 30,
+
                             decoration: BoxDecoration(
+                              shape: BoxShape.circle,
                               color: AppColors.indigo500.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
                             ),
-                            child: Text(
-                              filteredTasks.length.toString(),
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.indigo500,
+                            child: Center(
+                              child: Text(
+                                filteredTasks.length.toString(),
+                                style: GoogleFonts.poppins(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.indigo500,
+                                ),
                               ),
                             ),
                           ),

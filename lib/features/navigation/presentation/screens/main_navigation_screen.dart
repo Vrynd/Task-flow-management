@@ -7,7 +7,7 @@ import 'package:task_management/core/themes/app_colors.dart';
 import '../../../auth/providers/auth_provider.dart';
 import '../../../home/presentation/screens/home_screen.dart';
 import '../../../settings/presentation/screens/settings_screen.dart';
-import '../../../tasks/presentation/widgets/task_tab_body.dart';
+import '../../../tasks/presentation/screens/tasks_screen.dart';
 import '../../../tasks/presentation/widgets/categories_tab_body.dart';
 import '../../../tasks/providers/task_provider.dart';
 
@@ -27,13 +27,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final auth = context.read<AuthProvider>();
-      context.read<TaskProvider>().fetchTasks(authToken: auth.token);
+      context.read<TaskProvider>().fetchTasks(authToken: auth.token, authProvider: auth);
     });
   }
 
   final List<Widget> _screens = [
     const HomeScreen(isMenuMode: true),
-    const TasksTabBody(),
+    const TasksScreen(),
     const CategoriesTabBody(),
     const SettingsScreen(isMenuMode: true),
   ];

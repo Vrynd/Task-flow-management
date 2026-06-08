@@ -15,6 +15,7 @@ class AuthService {
 
   static const String _registerEndpoint = '/api/auth/register';
   static const String _loginEndpoint = '/api/auth/login';
+  static const String _logoutEndpoint = '/api/auth/logout';
 
   // ─── Register ────────────────────────────────────────────────────────────
 
@@ -57,13 +58,22 @@ class AuthService {
   Future<AuthResponse> login({
     required String email,
     required String password,
+    bool rememberMe = false,
   }) async {
     final body = <String, dynamic>{
       'email': email.trim().toLowerCase(),
       'password': password,
+      'remember_me': rememberMe,
     };
 
     final response = await _api.post(_loginEndpoint, body: body);
     return AuthResponse.fromJson(response);
+  }
+
+  // ─── Logout ──────────────────────────────────────────────────────────────
+  
+  /// Logout user dari server (fire-and-forget).
+  Future<void> logout({required String authToken}) async {
+    await _api.post(_logoutEndpoint, body: {}, authToken: authToken);
   }
 }

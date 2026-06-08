@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:task_management/core/services/api_service.dart';
+import '../../auth/providers/auth_provider.dart';
 import 'package:task_management/features/tasks/models/task_model.dart';
 import 'package:task_management/features/tasks/services/task_service.dart';
 
@@ -35,7 +36,7 @@ class TaskProvider extends ChangeNotifier {
       _tasks.where((t) => t.status == TaskStatus.done).toList();
 
   /// Mengambil semua tasks dari server.
-  Future<void> fetchTasks({String? authToken}) async {
+  Future<void> fetchTasks({String? authToken, AuthProvider? authProvider}) async {
     _isFetching = true;
     _errorMessage = null;
     notifyListeners();
@@ -44,6 +45,9 @@ class TaskProvider extends ChangeNotifier {
       _tasks = await _taskService.getTasks(authToken: authToken);
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401 && authProvider != null) {
+        authProvider.logout();
+      }
     } catch (_) {
       _errorMessage = 'Gagal mengambil data tugas.';
     } finally {
@@ -60,6 +64,7 @@ class TaskProvider extends ChangeNotifier {
     DateTime? deadline,
     CategoryModel? category,
     String? authToken,
+    AuthProvider? authProvider,
   }) async {
     _isCreating = true;
     _errorMessage = null;
@@ -79,6 +84,9 @@ class TaskProvider extends ChangeNotifier {
       return true;
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401 && authProvider != null) {
+        authProvider.logout();
+      }
       return false;
     } catch (_) {
       _errorMessage = 'Gagal membuat tugas baru.';
@@ -99,6 +107,7 @@ class TaskProvider extends ChangeNotifier {
     CategoryModel? category,
     TaskStatus? status,
     String? authToken,
+    AuthProvider? authProvider,
   }) async {
     _isUpdating = true;
     _errorMessage = null;
@@ -124,6 +133,9 @@ class TaskProvider extends ChangeNotifier {
       return true;
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401 && authProvider != null) {
+        authProvider.logout();
+      }
       return false;
     } catch (_) {
       _errorMessage = 'Gagal memperbarui tugas.';
@@ -139,6 +151,7 @@ class TaskProvider extends ChangeNotifier {
     required String id,
     required TaskStatus status,
     String? authToken,
+    AuthProvider? authProvider,
   }) async {
     _isUpdating = true;
     _errorMessage = null;
@@ -162,6 +175,9 @@ class TaskProvider extends ChangeNotifier {
       return true;
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401 && authProvider != null) {
+        authProvider.logout();
+      }
       return false;
     } catch (_) {
       _errorMessage = 'Gagal memperbarui status tugas.';
@@ -173,7 +189,7 @@ class TaskProvider extends ChangeNotifier {
   }
 
   //  Menghapus tugas
-  Future<bool> deleteTask({required String id, String? authToken}) async {
+  Future<bool> deleteTask({required String id, String? authToken, AuthProvider? authProvider}) async {
     _isDeleting = true;
     _errorMessage = null;
     notifyListeners();
@@ -192,6 +208,9 @@ class TaskProvider extends ChangeNotifier {
       return false;
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401 && authProvider != null) {
+        authProvider.logout();
+      }
       return false;
     } catch (_) {
       _errorMessage = 'Gagal menghapus tugas.';

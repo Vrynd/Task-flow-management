@@ -54,6 +54,9 @@ class SettingsProvider extends ChangeNotifier {
       }
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401 && authProvider != null) {
+        authProvider.logout();
+      }
     } catch (e) {
       _errorMessage = 'Gagal memuat data profil dan statistik.';
     } finally {
@@ -102,6 +105,9 @@ class SettingsProvider extends ChangeNotifier {
       return true;
     } on ApiException catch (e) {
       _errorMessage = e.message;
+      if (e.statusCode == 401) {
+        authProvider.logout();
+      }
       return false;
     } catch (_) {
       _errorMessage = 'Gagal memperbarui data profil.';

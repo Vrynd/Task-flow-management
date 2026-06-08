@@ -167,6 +167,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await _authService.login(
         email: email,
         password: password,
+        rememberMe: rememberMe,
       );
 
       if (response.isSuccess) {
@@ -207,6 +208,7 @@ class AuthProvider extends ChangeNotifier {
 
   /// Logout user dan hapus semua sesi tersimpan.
   Future<void> logout() async {
+    final token = _token;
     final prefs = await SharedPreferences.getInstance();
     await _clearSession(prefs);
 
@@ -216,6 +218,13 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
 
     notifyListeners();
+
+    // Call API as fire-and-forget in the background
+    if (token != null) {
+      _authService.logout(authToken: token).catchError((_) {
+        // Abaikan error (seperti 401 Unauthorized karena token kadaluarsa)
+      });
+    }
   }
 
   /// Memperbarui user saat ini secara dinamis dan menyinkronkan ke cache lokal.

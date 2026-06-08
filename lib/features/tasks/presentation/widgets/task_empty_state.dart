@@ -4,21 +4,32 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import '../../../../../core/themes/app_colors.dart';
 
-/// Widget Empty State dengan garis luar bermotif dashed (putus-putus) modern.
-class HomeEmptyState extends StatelessWidget {
-  final String message;
-  final String subtitle;
+/// Widget Empty State dengan garis luar bermotif dashed (putus-putus) kustom untuk menu Task.
+class TaskEmptyState extends StatelessWidget {
+  final bool isSearchMode;
+  final String? message;
+  final String? subtitle;
 
-  const HomeEmptyState({
+  const TaskEmptyState({
     super.key,
-    required this.message,
-    this.subtitle = 'Tugas yang dijadwalkan hari ini akan muncul di sini',
+    this.isSearchMode = false,
+    this.message,
+    this.subtitle,
   });
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
+
+    final String displayMessage = message ?? (isSearchMode ? 'Tugas tidak ditemukan' : 'Belum ada tugas');
+    final String displaySubtitle = subtitle ?? (isSearchMode
+        ? 'Coba gunakan kata kunci pencarian lain atau ubah filter prioritas Anda.'
+        : 'Semua rencana Anda bersih. Mulai hari ini dengan menambahkan tugas baru.');
+
+    final displayIcon = isSearchMode
+        ? HugeIcons.strokeRoundedSearch01
+        : HugeIcons.strokeRoundedTask02;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 20),
@@ -60,7 +71,7 @@ class HomeEmptyState extends StatelessWidget {
                 ),
                 child: Center(
                   child: HugeIcon(
-                    icon: HugeIcons.strokeRoundedCalendar03,
+                    icon: displayIcon,
                     size: 32,
                     color: AppColors.indigo500.withValues(alpha: 0.8),
                   ),
@@ -68,7 +79,7 @@ class HomeEmptyState extends StatelessWidget {
               ),
               const SizedBox(height: 18),
               Text(
-                message,
+                displayMessage,
                 style: GoogleFonts.poppins(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -81,7 +92,7 @@ class HomeEmptyState extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  subtitle,
+                  displaySubtitle,
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: theme.colorScheme.onSurfaceVariant,
