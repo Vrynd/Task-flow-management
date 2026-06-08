@@ -7,6 +7,7 @@ import 'core/routes/app_router.dart';
 import 'core/themes/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
 import 'features/tasks/providers/task_provider.dart';
+import 'features/settings/providers/settings_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +24,7 @@ class TaskManagementApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => TaskProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()),
       ],
       child: const _AppRoot(),
     );

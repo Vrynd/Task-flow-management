@@ -5,6 +5,7 @@ import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
 import '../../features/home/presentation/screens/home_screen.dart';
+import '../../features/settings/presentation/screens/settings_screen.dart';
 
 /// [AppRouter] mendefinisikan sistem routing terpusat menggunakan [GoRouter].
 abstract class AppRouter {
@@ -12,6 +13,7 @@ abstract class AppRouter {
   static const String login = '/login';
   static const String register = '/register';
   static const String home = '/home';
+  static const String settings = '/settings';
 
   static GoRouter createRouter(AuthProvider authProvider) {
     return GoRouter(
@@ -38,6 +40,11 @@ abstract class AppRouter {
           path: home,
           name: 'home',
           builder: (_, __) => const HomeScreen(),
+        ),
+        GoRoute(
+          path: settings,
+          name: 'settings',
+          builder: (_, __) => const SettingsScreen(),
         ),
       ],
     );

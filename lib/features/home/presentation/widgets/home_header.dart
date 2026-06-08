@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
 import 'package:task_management/features/auth/models/user_model.dart';
 
 import '../../../../../core/themes/app_colors.dart';
@@ -38,6 +39,7 @@ class HomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final hasAvatar = user?.avatarUrl != null && user!.avatarUrl!.trim().isNotEmpty;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -80,33 +82,47 @@ class HomeHeader extends StatelessWidget {
         const SizedBox(width: 12),
 
         // ── Avatar ───────────────────────────────────────────
-        Container(
-          width: 48,
-          height: 48,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [AppColors.indigo500, AppColors.indigo600],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+        GestureDetector(
+          onTap: () => context.push('/settings'),
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              gradient: hasAvatar
+                  ? null
+                  : const LinearGradient(
+                      colors: [AppColors.indigo500, AppColors.indigo600],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+              shape: BoxShape.circle,
+              image: hasAvatar
+                  ? DecorationImage(
+                      image: NetworkImage(user!.avatarUrl!),
+                      fit: BoxFit.cover,
+                      onError: (_, __) {},
+                    )
+                  : null,
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.indigo500.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
             ),
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.indigo500.withValues(alpha: 0.3),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Center(
-            child: Text(
-              _initials,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
+            child: hasAvatar
+                ? null
+                : Center(
+                    child: Text(
+                      _initials,
+                      style: GoogleFonts.poppins(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
           ),
         ),
       ],

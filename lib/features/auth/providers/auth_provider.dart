@@ -203,6 +203,19 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Memperbarui user saat ini secara dinamis dan menyinkronkan ke cache lokal.
+  void updateCurrentUser(UserModel user) {
+    _currentUser = user;
+    notifyListeners();
+
+    SharedPreferences.getInstance().then((prefs) {
+      final savedToken = prefs.getString(_PrefKeys.token);
+      if (savedToken != null) {
+        _saveSession(token: savedToken, user: user);
+      }
+    });
+  }
+
   // ─── Session Persistence ──────────────────────────────────────────────────
 
   Future<void> _saveSession({
