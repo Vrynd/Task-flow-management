@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:task_management/core/themes/app_colors.dart';
 import 'package:task_management/features/auth/providers/auth_provider.dart';
-import 'package:task_management/features/home/presentation/widgets/custom_fab_location.dart';
 import 'package:task_management/features/home/presentation/widgets/task_list_item.dart';
 import 'package:task_management/features/tasks/models/task_model.dart';
 import 'package:task_management/features/tasks/presentation/screens/create_task_screen.dart';
@@ -178,20 +177,6 @@ class _TasksScreenState extends State<TasksScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.slate900,
-      floatingActionButton: FloatingActionButton.extended(
-        heroTag: null,
-        onPressed: () => _openCreateTask(context),
-        backgroundColor: AppColors.indigo600,
-        foregroundColor: Colors.white,
-        elevation: 4,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        icon: const Icon(Icons.add_rounded, size: 22),
-        label: Text(
-          'Tugas Baru',
-          style: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600),
-        ),
-      ),
-      floatingActionButtonLocation: const CustomFabLocation(),
       body: SafeArea(
         top: false,
         child: Column(
@@ -273,23 +258,29 @@ class _TasksScreenState extends State<TasksScreen> {
                         ),
                         const SizedBox(height: 16),
 
-                        TaskSearchBar(
-                          controller: _searchController,
-                          onChanged: (val) {
-                            setState(() {
-                              _searchQuery = val.trim().toLowerCase();
-                            });
-                          },
-                        ),
-                        const SizedBox(height: 16),
-
-                        TaskPriorityFilter(
-                          selectedPriority: _selectedPriority,
-                          onPrioritySelected: (priority) {
-                            setState(() {
-                              _selectedPriority = priority;
-                            });
-                          },
+                        // Search Bar & Priority Filter (Sejajar berdampingan)
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TaskSearchBar(
+                                controller: _searchController,
+                                onChanged: (val) {
+                                  setState(() {
+                                    _searchQuery = val.trim().toLowerCase();
+                                  });
+                                },
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            TaskPriorityFilter(
+                              selectedPriority: _selectedPriority,
+                              onPrioritySelected: (priority) {
+                                setState(() {
+                                  _selectedPriority = priority;
+                                });
+                              },
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 24),
 
@@ -328,6 +319,50 @@ class _TasksScreenState extends State<TasksScreen> {
                                   ),
                                 ),
                               ),
+                              const Spacer(),
+                              if (_activeTab == 0)
+                                InkWell(
+                                  onTap: () => _openCreateTask(context),
+                                  borderRadius: BorderRadius.circular(100),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 12,
+                                      vertical: 12,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.indigo600,
+                                      borderRadius: BorderRadius.circular(100),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.indigo500.withValues(
+                                            alpha: 0.2,
+                                          ),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const Icon(
+                                          Icons.add_rounded,
+                                          size: 14,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          'Tugas Baru',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 11,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                             ],
                           ),
                         ),
@@ -336,8 +371,10 @@ class _TasksScreenState extends State<TasksScreen> {
                         Expanded(
                           child: RefreshIndicator(
                             color: AppColors.indigo500,
-                            onRefresh: () =>
-                                taskProvider.fetchTasks(authToken: auth.token, authProvider: auth),
+                            onRefresh: () => taskProvider.fetchTasks(
+                              authToken: auth.token,
+                              authProvider: auth,
+                            ),
                             child: taskProvider.isFetching
                                 ? const Center(
                                     child: CircularProgressIndicator(

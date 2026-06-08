@@ -14,20 +14,6 @@ class TaskPriorityFilter extends StatelessWidget {
     required this.selectedPriority,
     required this.onPrioritySelected,
   });
-
-  String _getPriorityLabel(TaskPriority? priority) {
-    switch (priority) {
-      case TaskPriority.high:
-        return 'Tinggi';
-      case TaskPriority.medium:
-        return 'Sedang';
-      case TaskPriority.low:
-        return 'Rendah';
-      case null:
-        return 'Semua';
-    }
-  }
-
   Color _getPriorityColor(TaskPriority? priority) {
     switch (priority) {
       case TaskPriority.high:
@@ -40,7 +26,6 @@ class TaskPriorityFilter extends StatelessWidget {
         return AppColors.indigo500;
     }
   }
-
   void _showPriorityBottomSheet(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
@@ -196,54 +181,50 @@ class TaskPriorityFilter extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = _getPriorityColor(selectedPriority);
-    final label = _getPriorityLabel(selectedPriority);
 
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: InkWell(
-        onTap: () => _showPriorityBottomSheet(context),
-        borderRadius: BorderRadius.circular(100),
-        child: Container(
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.slate900.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(100),
-            border: Border.all(
-              color: AppColors.slate700.withValues(alpha: 0.5),
-              width: 1,
+    return InkWell(
+      onTap: () => _showPriorityBottomSheet(context),
+      borderRadius: BorderRadius.circular(100),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 54,
+            height: 54,
+            decoration: BoxDecoration(
+              color: AppColors.slate900.withValues(alpha: 0.6),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppColors.slate700.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+            child: Center(
+              child: HugeIcon(
+                icon: HugeIcons.strokeRoundedFilter,
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+                size: 20,
+              ),
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Indikator warna prioritas aktif
-              Container(
-                width: 8,
-                height: 8,
+          if (selectedPriority != null)
+            Positioned(
+              top: 2,
+              right: 2,
+              child: Container(
+                width: 12,
+                height: 12,
                 decoration: BoxDecoration(
                   color: color,
                   shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.slate800,
+                    width: 2,
+                  ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Text(
-                'Prioritas: $label',
-                style: GoogleFonts.poppins(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w500,
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-              const SizedBox(width: 8),
-              HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowDown01,
-                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-                size: 16,
-              ),
-            ],
-          ),
-        ),
+            ),
+        ],
       ),
     );
   }
