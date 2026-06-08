@@ -38,6 +38,7 @@ class AuthProvider extends ChangeNotifier {
   String? _token;
   String? _errorMessage;
   bool _isLoading = false;
+  String? _rememberedEmail;
 
   // ─── Getters ─────────────────────────────────────────────────────────────
 
@@ -47,6 +48,7 @@ class AuthProvider extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   bool get isLoading => _isLoading;
   bool get isAuthenticated => _status == AuthStatus.authenticated && _token != null;
+  String? get rememberedEmail => _rememberedEmail;
 
   // ─── Initialization ───────────────────────────────────────────────────────
 
@@ -60,6 +62,7 @@ class AuthProvider extends ChangeNotifier {
 
     try {
       final prefs = await SharedPreferences.getInstance();
+      _rememberedEmail = prefs.getString('remembered_email');
       final savedToken = prefs.getString(_PrefKeys.token);
       final expiryStr = prefs.getString(_PrefKeys.tokenExpiry);
 
@@ -116,8 +119,14 @@ class AuthProvider extends ChangeNotifier {
         _currentUser = response.user;
         _status = AuthStatus.authenticated;
 
+        final prefs = await SharedPreferences.getInstance();
         if (rememberMe) {
           await _saveSession(token: response.token!, user: response.user!);
+          await prefs.setString('remembered_email', email);
+          _rememberedEmail = email;
+        } else {
+          await prefs.remove('remembered_email');
+          _rememberedEmail = null;
         }
 
         notifyListeners();
@@ -165,8 +174,14 @@ class AuthProvider extends ChangeNotifier {
         _currentUser = response.user;
         _status = AuthStatus.authenticated;
 
+        final prefs = await SharedPreferences.getInstance();
         if (rememberMe) {
           await _saveSession(token: response.token!, user: response.user!);
+          await prefs.setString('remembered_email', email);
+          _rememberedEmail = email;
+        } else {
+          await prefs.remove('remembered_email');
+          _rememberedEmail = null;
         }
 
         notifyListeners();

@@ -12,7 +12,8 @@ import '../../providers/settings_provider.dart';
 
 /// Halaman Pengaturan & Profil Pengguna.
 class SettingsScreen extends StatefulWidget {
-  const SettingsScreen({super.key});
+  final bool isMenuMode;
+  const SettingsScreen({super.key, this.isMenuMode = false});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -100,21 +101,24 @@ class _SettingsScreenState extends State<SettingsScreen> {
         backgroundColor: theme.scaffoldBackgroundColor,
         elevation: 0,
         scrolledUnderElevation: 0,
-        leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
-          icon: Container(
-            padding: const EdgeInsets.all(6),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(
-              Icons.arrow_back_rounded,
-              size: 18,
-              color: theme.colorScheme.onSurface,
-            ),
-          ),
-        ),
+        automaticallyImplyLeading: false,
+        leading: widget.isMenuMode
+            ? null
+            : IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(
+                    Icons.arrow_back_rounded,
+                    size: 18,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ),
         title: Text(
           'Profil & Pengaturan',
           style: GoogleFonts.poppins(
@@ -184,7 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             onRefresh: _handleRefresh,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(20),
+              padding: EdgeInsets.fromLTRB(20, 20, 20, widget.isMenuMode ? 140 : 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -194,7 +198,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onEditTap: () => _showEditProfileBottomSheet(context),
                     onLogoutTap: () {
                       authProvider.logout();
-                      Navigator.of(context).pop();
                     },
                   ),
 

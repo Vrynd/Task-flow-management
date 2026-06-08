@@ -12,7 +12,8 @@ import '../widgets/task_list_item.dart';
 
 /// Halaman utama aplikasi (Home).
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final bool isMenuMode;
+  const HomeScreen({super.key, this.isMenuMode = false});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -54,6 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: _CreateTaskFab(
         onPressed: () => _openCreateTask(context),
       ),
+      floatingActionButtonLocation: widget.isMenuMode
+          ? const CustomFabLocation()
+          : null,
     );
   }
 }
@@ -344,7 +348,7 @@ class _HomeBodyState extends State<_HomeBody> {
                   )
                 else
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 150),
                     sliver: SliverList.separated(
                       itemCount: currentTasks.length,
                       separatorBuilder: (_, __) =>
@@ -591,6 +595,7 @@ class _CreateTaskFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton.extended(
+      heroTag: null,
       onPressed: onPressed,
       backgroundColor: AppColors.indigo600,
       foregroundColor: Colors.white,
@@ -796,5 +801,19 @@ class _StatusBottomSheetOption extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class CustomFabLocation extends FloatingActionButtonLocation {
+  const CustomFabLocation();
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    final double fabWidth = scaffoldGeometry.floatingActionButtonSize.width;
+    final double fabHeight = scaffoldGeometry.floatingActionButtonSize.height;
+
+    final double fabX = scaffoldGeometry.scaffoldSize.width - fabWidth - 20;
+    final double fabY = scaffoldGeometry.scaffoldSize.height - fabHeight - 150;
+    return Offset(fabX, fabY);
   }
 }

@@ -198,6 +198,16 @@ class _LoginFormContentState extends State<_LoginFormContent> {
   bool _rememberMe = false;
 
   @override
+  void initState() {
+    super.initState();
+    final auth = context.read<AuthProvider>();
+    if (auth.rememberedEmail != null && auth.rememberedEmail!.isNotEmpty) {
+      _emailController.text = auth.rememberedEmail!;
+      _rememberMe = true;
+    }
+  }
+
+  @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();

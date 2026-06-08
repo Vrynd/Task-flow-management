@@ -1,18 +1,5 @@
 import 'user_model.dart';
 
-/// Model untuk wrapping response autentikasi dari API.
-///
-/// Merepresentasikan struktur:
-/// ```json
-/// {
-///   "success": true,
-///   "message": "...",
-///   "data": {
-///     "user": { ... },
-///     "token": "eyJ..."
-///   }
-/// }
-/// ```
 class AuthResponse {
   final bool success;
   final String message;
@@ -26,8 +13,6 @@ class AuthResponse {
     this.token,
   });
 
-  // ─── Factory Constructor ──────────────────────────────────────────────────
-
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>?;
     final userJson = data?['user'] as Map<String, dynamic>?;
@@ -39,8 +24,6 @@ class AuthResponse {
       token: data?['token'] as String?,
     );
   }
-
-  // ─── Helper ───────────────────────────────────────────────────────────────
 
   bool get isSuccess => success && user != null && token != null;
 

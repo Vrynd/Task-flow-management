@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/screens/login_screen.dart';
 import '../../features/auth/presentation/screens/register_screen.dart';
 import '../../features/auth/providers/auth_provider.dart';
-import '../../features/home/presentation/screens/home_screen.dart';
 import '../../features/settings/presentation/screens/settings_screen.dart';
+import '../../features/navigation/presentation/screens/main_navigation_screen.dart';
 
 /// [AppRouter] mendefinisikan sistem routing terpusat menggunakan [GoRouter].
 abstract class AppRouter {
@@ -39,7 +39,7 @@ abstract class AppRouter {
         GoRoute(
           path: home,
           name: 'home',
-          builder: (_, __) => const HomeScreen(),
+          builder: (_, __) => const MainNavigationScreen(),
         ),
         GoRoute(
           path: settings,
