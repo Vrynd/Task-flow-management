@@ -42,12 +42,11 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Menyesuaikan warna navigasi secara eksplisit dengan lib/core/themes/app_colors.dart
-    final Color dockBgColor = AppColors.slate900.withValues(alpha: 0.85);
-    final Color dockBorderColor = Colors.white.withValues(alpha: 0.08);
-    final Color activeCircleColor = Colors.black.withValues(alpha: 0.4);
+    final Color dockBgColor = AppColors.slate800.withValues(alpha: 0.9);
+    final Color dockBorderColor = AppColors.indigo500.withValues(alpha: 0.25);
+    final Color activeCircleColor = AppColors.indigo500;
     final Color inactiveCircleColor = Colors.white.withValues(alpha: 0.06);
-    final Color activeIconColor = AppColors.indigo100; // Warna indigo dari AppColors
+    final Color activeIconColor = Colors.white;
     final Color inactiveIconColor = Colors.white.withValues(alpha: 0.45);
 
     return Scaffold(
@@ -65,7 +64,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 
           // Floating Navigation Dock
           Positioned(
-            bottom: 32, // Jarak bawah 64px
+            bottom: 40, // Jarak bawah 64px
             left: 0,
             right: 0,
             child: Center(
@@ -74,7 +73,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
                   child: Container(
-                    height: 62,
+                    // height: 62,
                     decoration: BoxDecoration(
                       color: dockBgColor,
                       borderRadius: BorderRadius.circular(32),
@@ -90,7 +89,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                         )
                       ],
                     ),
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -166,8 +165,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         curve: Curves.easeInOut,
-        width: 52,
-        height: 52,
+        width: 54,
+        height: 54,
         decoration: BoxDecoration(
           color: isSelected ? activeCircleColor : inactiveCircleColor,
           shape: BoxShape.circle,
@@ -181,7 +180,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         child: Center(
           child: HugeIcon(
             icon: icon,
-            size: 20,
+            size: 24,
             color: isSelected ? activeIconColor : inactiveIconColor,
           ),
         ),
