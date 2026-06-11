@@ -4,6 +4,18 @@ TaskFlow adalah aplikasi manajemen tugas (*Task Management*) modern berbasis Flu
 
 ---
 
+## 👥 Tim Pengembang
+
+Proyek ini dibangun dan dikembangkan oleh:
+
+- **Rifky Verryan Dhika** (NPM: 5230411112)
+- **Revaldo Ilham Maulana** (NPM: 5230411134)
+- **Made Widhiyana** (NPM: 5230411138)
+- **Louis Mahardhika** (NPM: 5230411139)
+- **Ardian Anugrah Pratama** (NPM: 5230411140)
+
+---
+
 ## 🚀 Fitur Utama
 
 Aplikasi ini dilengkapi dengan berbagai fitur premium, antara lain:
@@ -106,14 +118,3 @@ Gunakan perintah berikut untuk menjalankan aplikasi pada emulator atau perangkat
 flutter run
 ```
 
----
-
-## 👥 Tim Pengembang
-
-Proyek ini dibangun dan dikembangkan oleh:
-
-- **Rifky Verryan Dhika** (NPM: 5230411112)
-- **Revaldo Ilham Maulana** (NPM: 5230411134)
-- **Made Widhiyana** (NPM: 5230411138)
-- **Louis Mahardhika** (NPM: 5230411139)
-- **Ardian Anugrah Pratama** (NPM: 5230411140)
