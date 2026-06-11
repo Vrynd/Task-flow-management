@@ -1,32 +1,18 @@
 import '../../../../core/services/api_service.dart';
 import '../models/auth_response.dart';
 
-/// [AuthService] menangani semua API call yang berkaitan dengan autentikasi.
-///
-/// Bergantung pada [ApiService] sebagai HTTP client.
-/// Tidak boleh import widget atau screen apapun.
 class AuthService {
   final ApiService _api;
 
   AuthService({ApiService? apiService})
       : _api = apiService ?? ApiService();
 
-  // ─── Endpoints ───────────────────────────────────────────────────────────
 
   static const String _registerEndpoint = '/api/auth/register';
   static const String _loginEndpoint = '/api/auth/login';
   static const String _logoutEndpoint = '/api/auth/logout';
 
-  // ─── Register ────────────────────────────────────────────────────────────
-
-  /// Mendaftarkan user baru ke server.
-  ///
-  /// - [name]: Nama lengkap user
-  /// - [email]: Email user
-  /// - [password]: Password minimal 6 karakter
-  /// - [avatarUrl]: URL avatar opsional
-  ///
-  /// Melempar [ApiException] jika terjadi error pada server atau jaringan.
+  // Register
   Future<AuthResponse> register({
     required String name,
     required String email,
@@ -47,14 +33,7 @@ class AuthService {
     return AuthResponse.fromJson(response);
   }
 
-  // ─── Login ───────────────────────────────────────────────────────────────
-
-  /// Login user ke server.
-  ///
-  /// - [email]: Email user
-  /// - [password]: Password user
-  ///
-  /// Melempar [ApiException] jika terjadi error pada server atau jaringan.
+  // Login
   Future<AuthResponse> login({
     required String email,
     required String password,
@@ -70,9 +49,7 @@ class AuthService {
     return AuthResponse.fromJson(response);
   }
 
-  // ─── Logout ──────────────────────────────────────────────────────────────
-  
-  /// Logout user dari server (fire-and-forget).
+  // Logout
   Future<void> logout({required String authToken}) async {
     await _api.post(_logoutEndpoint, body: {}, authToken: authToken);
   }

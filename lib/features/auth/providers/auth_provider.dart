@@ -5,12 +5,9 @@ import '../../../../core/services/api_service.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 
-// ─── Auth State ─────────────────────────────────────────────────────────────
-
 enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
-// ─── Shared Preferences Keys ─────────────────────────────────────────────────
-
+// Shared Preferences
 class _PrefKeys {
   static const String token = 'auth_token';
   static const String tokenExpiry = 'auth_token_expiry';
@@ -19,19 +16,12 @@ class _PrefKeys {
   static const String userEmail = 'auth_user_email';
   static const String userAvatarUrl = 'auth_user_avatar_url';
 }
-
-/// [AuthProvider] mengelola state autentikasi di seluruh aplikasi.
-///
-/// Tidak boleh import widget atau screen apapun.
-/// Menggunakan [AuthService] untuk API calls dan [SharedPreferences]
-/// untuk persistensi sesi (fitur "Ingat Saya" 7 hari).
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService;
 
   AuthProvider({AuthService? authService})
       : _authService = authService ?? AuthService();
 
-  // ─── State ──────────────────────────────────────────────────────────────
 
   AuthStatus _status = AuthStatus.initial;
   UserModel? _currentUser;
@@ -39,8 +29,6 @@ class AuthProvider extends ChangeNotifier {
   String? _errorMessage;
   bool _isLoading = false;
   String? _rememberedEmail;
-
-  // ─── Getters ─────────────────────────────────────────────────────────────
 
   AuthStatus get status => _status;
   UserModel? get currentUser => _currentUser;
@@ -52,11 +40,7 @@ class AuthProvider extends ChangeNotifier {
 
   // ─── Initialization ───────────────────────────────────────────────────────
 
-  /// Dipanggil saat app pertama kali dibuka.
-  /// Cek apakah ada sesi yang masih valid (Remember Me).
   Future<void> initialize() async {
-    // Set langsung tanpa notifyListeners() untuk menghindari
-    // trigger rebuild saat widget tree belum selesai dibuat.
     _isLoading = true;
     _status = AuthStatus.initial;
 
@@ -86,18 +70,11 @@ class AuthProvider extends ChangeNotifier {
       _status = AuthStatus.unauthenticated;
     } finally {
       _isLoading = false;
-      // Notify hanya SEKALI di akhir setelah semua state siap
       notifyListeners();
     }
   }
 
-  // ─── Register ─────────────────────────────────────────────────────────────
-
   /// Mendaftarkan user baru.
-  ///
-  /// - [rememberMe]: Jika true, token disimpan selama 7 hari.
-  ///
-  /// Return `true` jika berhasil, `false` jika gagal.
   Future<bool> register({
     required String name,
     required String email,
@@ -148,13 +125,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Login ────────────────────────────────────────────────────────────────
 
-  /// Login user.
-  ///
-  /// - [rememberMe]: Jika true, token disimpan selama 7 hari.
-  ///
-  /// Return `true` jika berhasil, `false` jika gagal.
   Future<bool> login({
     required String email,
     required String password,
@@ -204,8 +175,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  // ─── Logout ───────────────────────────────────────────────────────────────
-
   /// Logout user dan hapus semua sesi tersimpan.
   Future<void> logout() async {
     final token = _token;
@@ -218,11 +187,9 @@ class AuthProvider extends ChangeNotifier {
     _errorMessage = null;
 
     notifyListeners();
-
-    // Call API as fire-and-forget in the background
     if (token != null) {
       _authService.logout(authToken: token).catchError((_) {
-        // Abaikan error (seperti 401 Unauthorized karena token kadaluarsa)
+        
       });
     }
   }
@@ -239,8 +206,6 @@ class AuthProvider extends ChangeNotifier {
       }
     });
   }
-
-  // ─── Session Persistence ──────────────────────────────────────────────────
 
   Future<void> _saveSession({
     required String token,
@@ -278,9 +243,7 @@ class AuthProvider extends ChangeNotifier {
       updatedAt: DateTime.now(),
     );
   }
-
-  // ─── Private Helpers ─────────────────────────────────────────────────────
-
+  
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

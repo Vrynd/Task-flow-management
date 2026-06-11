@@ -17,7 +17,7 @@ class ApiService {
   static final ApiService _instance = ApiService._internal();
   factory ApiService() => _instance;
 
-  static const String baseUrl = 'http://192.168.100.63:3000';
+  static const String baseUrl = 'http://192.168.43.100:3000';
   static const Duration _timeout = Duration(seconds: 15);
   final http.Client _client = http.Client();
 
@@ -32,15 +32,7 @@ class ApiService {
     return headers;
   }
 
-  // ─── POST ────────────────────────────────────────────────────────────────────
-
-  /// Mengirim POST request ke [endpoint] dengan [body].
-  ///
-  /// - [endpoint]: Path setelah base URL, contoh: `/api/auth/register`
-  /// - [body]: Map yang akan di-encode ke JSON
-  /// - [authToken]: Opsional, Bearer token untuk protected endpoint
-  ///
-  /// Melempar [ApiException] jika terjadi error.
+  // POST
   Future<Map<String, dynamic>> post(
     String endpoint, {
     required Map<String, dynamic> body,
